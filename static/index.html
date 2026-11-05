@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gdje kupiti?</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f6f4a'/%3E%3Cpath d='M8 11h16l-2 10H10z' fill='none' stroke='white' stroke-width='2.4' stroke-linejoin='round'/%3E%3Ccircle cx='12' cy='25' r='1.8' fill='white'/%3E%3Ccircle cx='21' cy='25' r='1.8' fill='white'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="zaglavlje">
+    <div class="logo">
+      <span class="logo-znak" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M8 11h16l-2 10H10z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><circle cx="12" cy="25" r="1.8" fill="currentColor"/><circle cx="21" cy="25" r="1.8" fill="currentColor"/></svg>
+      </span>
+      <span>Gdje kupiti?</span>
+      <span id="demo-oznaka" class="oznaka-demo" hidden>DEMO podaci</span>
+    </div>
+    <button id="otvori-postavke" class="gumb-tekst" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      Postavke
+    </button>
+  </header>
+
+  <div id="obavijesti" class="obavijesti" aria-live="polite"></div>
+
+  <main class="raspored">
+    <div class="stupac">
+      <section class="kartica" aria-labelledby="naslov-popis">
+        <div class="kartica-glava">
+          <h2 id="naslov-popis">Popis za kupovinu</h2>
+          <span id="broj-artikala" class="tiho"></span>
+        </div>
+
+        <form id="trazilica" class="trazilica" autocomplete="off">
+          <input id="upit" type="search" placeholder="Traži proizvod, npr. mlijeko 1 l" aria-label="Traži proizvod">
+          <button class="gumb" type="submit">Traži</button>
+        </form>
+
+        <div id="zapamceno" class="zapamceno" hidden>
+          <span class="tiho">Zapamćeno:</span>
+          <div id="zapamceno-lista" class="cipovi"></div>
+        </div>
+
+        <div id="rezultati-pretrage" class="pretraga" hidden>
+          <div class="pretraga-glava">
+            <span id="pretraga-info" class="tiho"></span>
+            <button id="zatvori-pretragu" class="gumb-tekst malo" type="button">Zatvori</button>
+          </div>
+          <ul id="pretraga-lista" class="pretraga-lista"></ul>
+          <div id="grupa-traka" class="grupa-traka" hidden>
+            <span id="grupa-broj"></span>
+            <button id="dodaj-grupu" class="gumb" type="button">Dodaj kao „bilo koji takav”</button>
+          </div>
+        </div>
+
+        <ul id="popis" class="popis"></ul>
+        <p id="popis-prazan" class="prazno">Popis je prazan. Potraži proizvod i dodaj ga gumbom <b>Točno ovaj</b>, ili označi više sličnih i dodaj ih kao <b>bilo koji takav</b>.</p>
+      </section>
+
+      <section class="kartica" aria-labelledby="naslov-put">
+        <h2 id="naslov-put">Kako ideš?</h2>
+        <div class="nacini" role="radiogroup" aria-label="Način puta">
+          <button type="button" class="nacin" data-nacin="auto" role="radio">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16V11l2-5h10l2 5v5M5 16h14M5 16v2M19 16v2M3 11h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="13.5" r="1" fill="currentColor"/><circle cx="16" cy="13.5" r="1" fill="currentColor"/></svg>
+            Auto
+          </button>
+          <button type="button" class="nacin" data-nacin="pjesice" role="radio">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13" cy="4.5" r="2" fill="currentColor"/><path d="M10 21l2-6 3 3v3M9 12l2-4 3 1 2 3M12 15l-1-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Pješice
+          </button>
+          <button type="button" class="nacin" data-nacin="bicikl" role="radio">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="16" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="16" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6 16l4-7h5l3 7M10 9l2 7h-6M14 6h2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Bicikl
+          </button>
+        </div>
+        <p id="nacin-opis" class="tiho opis-nacina"></p>
+
+        <div class="polaziste">
+          <span class="oznaka">Polazim od</span>
+          <div class="polaziste-red">
+            <span id="polaziste-tekst" class="polaziste-tekst">—</span>
+            <button id="promijeni-polaziste" class="gumb-tekst malo" type="button">Promijeni</button>
+          </div>
+          <form id="polaziste-forma" class="trazilica" hidden autocomplete="off">
+            <input id="polaziste-upit" type="search" placeholder="Adresa, npr. Ilica 100, Zagreb" aria-label="Adresa polazišta">
+            <button class="gumb" type="submit">Traži</button>
+            <button id="moja-lokacija" class="gumb sekundarni" type="button" title="Koristi trenutnu lokaciju">Moja lokacija</button>
+          </form>
+          <ul id="polaziste-rezultati" class="adrese"></ul>
+        </div>
+
+        <button id="izracunaj" class="gumb glavni puna-sirina" type="button">Izračunaj gdje je najisplativije</button>
+      </section>
+    </div>
+
+    <div class="stupac">
+      <section id="rezultat" class="kartica rezultat" aria-live="polite" hidden></section>
+      <section class="kartica karta-kartica">
+        <div id="karta" class="karta" role="img" aria-label="Karta s rutom"></div>
+        <p id="karta-napomena" class="tiho karta-napomena" hidden></p>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="postavke" class="dijalog">
+    <form id="postavke-forma">
+      <div class="dijalog-glava">
+        <h2>Postavke</h2>
+        <button id="p-zatvori" class="gumb-tekst" type="button" aria-label="Zatvori">✕</button>
+      </div>
+
+      <fieldset>
+        <legend>Podaci o cijenama</legend>
+        <label>API ključ za cijene.dev
+          <input id="p-kljuc" type="password" autocomplete="off" placeholder="zalijepi ključ">
+        </label>
+        <p class="tiho">Ključ je besplatan za osobnu upotrebu. Zatraži ga na <a href="https://cijene.dev" target="_blank" rel="noopener">cijene.dev</a>. Sprema se samo na ovom računalu.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Kućna adresa</legend>
+        <div class="trazilica">
+          <input id="p-adresa" type="search" placeholder="Ulica i broj, grad" aria-label="Kućna adresa">
+          <button id="p-trazi-adresu" class="gumb" type="button">Traži</button>
+        </div>
+        <ul id="p-adrese" class="adrese"></ul>
+        <p id="p-adresa-odabrana" class="tiho"></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Auto</legend>
+        <div class="dva">
+          <label>Gorivo
+            <select id="p-gorivo">
+              <option value="benzin">Benzin (Eurosuper 95)</option>
+              <option value="dizel">Dizel</option>
+              <option value="lpg">Autoplin (LPG)</option>
+            </select>
+          </label>
+          <label>Prosječna potrošnja (l/100 km)
+            <input id="p-potrosnja" type="number" min="0" max="40" step="0.1" inputmode="decimal">
+          </label>
+        </div>
+        <div class="red-gorivo">
+          <span id="p-cijena-auto" class="tiho">Cijena goriva: učitavam…</span>
+          <button id="p-osvjezi-gorivo" class="gumb-tekst malo" type="button">Osvježi</button>
+        </div>
+        <label>Vlastita cijena goriva (€/l), ostavi prazno za automatsku
+          <input id="p-rucna-cijena" type="number" min="0" max="5" step="0.01" inputmode="decimal">
+        </label>
+        <label class="kvacica"><input id="p-vrijeme-auto" type="checkbox"> Uračunaj i vrijeme kad idem autom</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Vrijeme i udaljenost</legend>
+        <label>Koliko ti vrijedi sat vremena (€)
+          <input id="p-sat" type="number" min="0" max="200" step="0.5" inputmode="decimal">
+        </label>
+        <div class="tri">
+          <label>Najdalje autom (km)<input id="p-km-auto" type="number" min="0.5" max="50" step="0.5"></label>
+          <label>Biciklom (km)<input id="p-km-bicikl" type="number" min="0.5" max="30" step="0.5"></label>
+          <label>Pješice (km)<input id="p-km-pjesice" type="number" min="0.2" max="10" step="0.1"></label>
+        </div>
+        <label>Najviše dućana u jednoj kupovini
+          <select id="p-max-ducana">
+            <option value="1">1 (sve na jednom mjestu)</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Lanci koje ne želim</legend>
+        <div id="p-lanci" class="lanci"></div>
+      </fieldset>
+
+      <div class="dijalog-dno">
+        <button id="p-odustani" class="gumb sekundarni" type="button">Odustani</button>
+        <button id="p-spremi" class="gumb glavni" type="submit">Spremi</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="grupa-dijalog" class="dijalog malen">
+    <form id="grupa-forma">
+      <h2>Bilo koji takav</h2>
+      <p class="tiho">U svakom dućanu uzet će se najjeftiniji od označenih proizvoda. Kako da se zove?</p>
+      <label>Naziv na popisu<input id="grupa-naziv" type="text" maxlength="80" required></label>
+      <div class="dijalog-dno">
+        <button id="grupa-odustani" class="gumb sekundarni" type="button">Odustani</button>
+        <button class="gumb glavni" type="submit">Dodaj na popis</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
